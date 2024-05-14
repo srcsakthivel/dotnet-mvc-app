@@ -8,6 +8,8 @@ on:
 
 env:
   PROJECT_LOCATION: dotnet-mvc/dotnet-mvc.csproj
+  PROJECT_OUTPUT : project_output
+  PACK_OUTPUT: output
 
 jobs:
   build:
@@ -25,4 +27,19 @@ jobs:
     - name: Build
       run: dotnet build --no-restore $PROJECT_LOCATION
     - name: Pack
-      run: dotnet publish $PROJECT_LOCATION -c Release --output "${{ github.workspace }}/project_output"
+      run: |
+        dotnet publish $PROJECT_LOCATION -c Release --output "${{ github.workspace }}/$PROJECT_OUTPUT"
+        cd $PROJECT_OUTPUT
+        zip -r ../$PROJECT_OUTPUT.zip .
+    - name: Zip
+      run: |
+        mkdir "${{ github.workspace }}/$PACK_OUTPUT"
+        cp "${{ github.workspace }}/mvc-app/ElasticBeanstalkMainfest/aws-windows-deployment-manifest.json" "${{ github.workspace }}/$PACK_OUTPUT"
+        cp "${{ github.workspace }}/$PROJECT_OUTPUT.zip" "${{ github.workspace }}/$PACK_OUTPUT"
+        cd $PACK_OUTPUT
+        zip -r ../${{github.run_id}}.zip .
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4.3.3
+      with: 
+        name: deploy-files
+        path: ${{github.run_id}}.zip
