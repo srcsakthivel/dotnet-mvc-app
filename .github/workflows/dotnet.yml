@@ -43,3 +43,12 @@ jobs:
       with: 
         name: deploy-files
         path: ${{github.run_id}}.zip
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: us-east-1
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    - name: Deploy
+      run: |
+        aws s3 cp "${{ github.workspace }}/${{github.run_id}}.zip" s3://elasticbeanstalk-us-east-1-${{ secrets.AWS_ACCOUNT_ID }}/artifact/dotnet-mvc-app/
