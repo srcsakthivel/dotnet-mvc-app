@@ -10,6 +10,7 @@ env:
   PROJECT_LOCATION: dotnet-mvc/dotnet-mvc.csproj
   PROJECT_OUTPUT : project_output
   PACK_OUTPUT: output
+  ELASTIC_BEANSTALK_NAME: dotnet-mvc-app-host
 
 jobs:
   build:
@@ -52,5 +53,5 @@ jobs:
     - name: Deploy
       run: |
         aws s3 cp "${{ github.workspace }}/${{github.run_id}}.zip" s3://elasticbeanstalk-us-east-1-${{ secrets.AWS_ACCOUNT_ID }}/artifact/dotnet-mvc-app/
-        aws elasticbeanstalk create-application-version --application-name ha-app --version-label ${{github.run_id}} --description ${{github.run_id}} --source-bundle S3Bucket="elasticbeanstalk-us-east-1-836956848110",S3Key="gitlab-artifact/${{github.run_id}}.zip"
+        aws elasticbeanstalk create-application-version --application-name dotnet-mvc-app-host --version-label ${{github.run_id}} --description ${{github.run_id}} --source-bundle S3Bucket="elasticbeanstalk-us-east-1-${{ secrets.AWS_ACCOUNT_ID }}",S3Key="artifact/dotnet-mvc-app/${{github.run_id}}.zip"
 
