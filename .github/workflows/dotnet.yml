@@ -63,4 +63,5 @@ jobs:
     - uses: actions/download-artifact@v4.1.7
     - name: Debug
       run: |
+        cd deploy-files
         ls
