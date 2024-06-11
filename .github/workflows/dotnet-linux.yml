@@ -30,15 +30,8 @@ jobs:
       run: dotnet build --no-restore $PROJECT_LOCATION
     - name: Pack
       run: |
-        dotnet publish $PROJECT_LOCATION -c Release --output "${{ github.workspace }}/$PROJECT_OUTPUT"
-        cd $PROJECT_OUTPUT
-        zip -r ../$PROJECT_OUTPUT.zip .
-    - name: Zip
-      run: |
-        mkdir "${{ github.workspace }}/$PACK_OUTPUT"
-        cp "${{ github.workspace }}/dotnet-mvc/ElasticBeanstalkMainfest/aws-windows-deployment-manifest.json" "${{ github.workspace }}/$PACK_OUTPUT"
-        cp "${{ github.workspace }}/$PROJECT_OUTPUT.zip" "${{ github.workspace }}/$PACK_OUTPUT"
-        cd $PACK_OUTPUT
+        dotnet publish $PROJECT_LOCATION -c Release --output "${{ github.workspace }}/${{github.run_id}}"
+        cd ${{github.run_id}}
         zip -r ../${{github.run_id}}.zip .
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4.3.3
